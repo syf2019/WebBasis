@@ -24,7 +24,7 @@ hs_err_pid*
 
 /target
 src/test/*
-*.setting/
+*.settings/
 *.idea/
 .git/*
 *.project
