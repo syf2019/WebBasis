@@ -15,6 +15,3 @@ webplus 综合开发平台前身今生有IMS演变发展而来，居于现在最
 #### 软件架构
 软件架构说明
 springboot+mybatis-plus+redis（单机集群切换）+FastDFS（文件服务器）+thymeleaf+shiro+layui
-
-你的鼓励将是我最大的支持
-![输入图片说明](https://git.oschina.net/uploads/images/2017/0814/111124_0b3a1336_436510.png "屏幕截图.png")![输入图片说明](https://git.oschina.net/uploads/images/2017/0814/111137_4628637b_436510.png "屏幕截图.png")
