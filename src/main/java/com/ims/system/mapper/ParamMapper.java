@@ -1,0 +1,47 @@
+package com.ims.system.mapper;
+
+import com.ims.system.model.Param;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import java.util.List;
+import com.ims.common.matatype.Dto;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+
+/**
+ * <p>
+ * 键值参数 Mapper 接口
+ * </p>
+ *
+ * @author 陈骑元
+ * @since 2018-04-09
+ */
+public interface ParamMapper extends BaseMapper<Param> {
+
+    /**
+	 * 根据Dto查询并返回数据持久化对象集合
+	 * 
+	 * @return List<Param>
+	 */
+	List<Param> list(Dto pDto);
+    /**
+	 * 根据Dto查询并返回分页数据持久化对象集合
+	 * 
+	 * @return List<Param>
+	 */
+	List<Param> listPage(Pagination page,Dto pDto);
+		
+	/**
+	 * 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)
+	 * 
+	 * @return List<Param>
+	 */
+	List<Param> like(Dto pDto);
+
+	/**
+	 * 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)
+	 * 
+	 * @return List<Param>
+	 */
+	List<Param> likePage(Pagination page,Dto pDto);
+
+
+}

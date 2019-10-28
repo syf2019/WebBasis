@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include :: header"></head>
+<body>
+
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space1">
+			<div class="layui-col-md3" >
+				<div class="layui-card" style="overflow: auto;height: 100%;" >
+					<div class="layui-card-header">组织机构树</div>
+					<div class="layui-card-body">
+						<ul id="ztree" class="ztree"></ul>
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-md5">
+				<div class="layui-card">
+					<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+						id="searchForm">
+						<div class="layui-form-item">
+							<input type="hidden" id="outRoleId" name="outRoleId" th:value="${roleId}" />
+							<input type="hidden" id="cascadeId" name="cascadeId"  />
+							<div class="layui-inline">
+								<label class="layui-form-label">查询条件</label>
+								<div class="layui-input-block">
+									<input type="text" name="queryParam" placeholder="账号或用户名"
+										autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-inline">
+								<button class="layui-btn layuiadmin-btn-sm" lay-submit
+									lay-filter="searchSubmit">查询</button>
+
+							</div>
+
+						</div>
+					</div>
+					<div class="layui-card-body">
+						<table id="dataList" lay-filter="dataList"></table>
+
+
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-md4">
+			<div class="layui-card">
+					<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+						id="roleUserForm">
+						<div class="layui-form-item">
+							<input type="hidden" id="inRoleId" name="inRoleId" th:value="${roleId}" />
+							<div class="layui-inline">
+								<label class="layui-form-label">查询条件</label>
+								<div class="layui-input-block">
+									<input type="text" name="queryParam" placeholder="账号或用户名"
+										autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-inline">
+								<button class="layui-btn layuiadmin-btn-sm" lay-submit
+									lay-filter="roleUserSubmit">查询</button>
+
+							</div>
+
+						</div>
+					</div>
+					<div class="layui-card-body">
+						<table id="roleUserList" lay-filter="roleUserList"></table>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<link rel="stylesheet"
+			th:href="@{/lib/ztree/css/zTreeStyle/zTreeStyle.css}" type="text/css"
+			media="all">
+		<link rel="stylesheet" th:href="@{/css/common/loader.css}" media="all" />
+		<link rel="stylesheet" th:href="@{/css/common/tablepage.css}"
+			media="all" />
+		<script type="text/html" id="trTool">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="auzUser"><i class="layui-icon layui-icon-auz"></i>授权</a>
+</script>
+		<script type="text/html" id="roleUserTool">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>移除</a>
+</script>
+		<script type="text/html" id="toolbar">
+  <div class="layui-btn-container">
+    <button class="layui-btn layui-btn-sm" lay-event="batchAuzUser"> <i class="layui-icon" >&#xe654;</i>批量授权</button>
+  </div>
+</script>
+		<script type="text/html" id="roleUserToolbar">
+  <div class="layui-btn-container">
+    
+    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="batchRemove"> <i class="layui-icon layui-icon-delete"></i>批量移除授权</button>
+  </div>
+</script>
+		<div th:include="include :: footer"></div>
+		<script type="text/javascript"
+			th:src="@{/lib/ztree/js/jquery.ztree.core.js}"></script>
+		<script type="text/javascript"
+			th:src="@{/lib/ztree/js/jquery.ztree.excheck.js}"></script>
+		<script type="text/javascript"
+			th:src="@{/lib/ztree/js/jquery.ztree.exedit.js}"></script>
+		<script>
+	layui.config({
+		base :  cxt+'layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus' //主入口模块
+	}).use([ 'table', 'form','webplus' ], function() {
+		var $ = layui.$, 
+		form = layui.form, 
+		table = layui.table,
+		webplus=layui.webplus;
+		var setting = {
+				check: {
+					enable: false
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onClick: zTreeOnClick//节点点击事件
+				}
+			};
+			function zTreeOnClick(event, treeId, treeNode) {
+			    var cascadeId="";
+			    if(treeNode.id!='0'){
+			    	//获取查询对象数据
+			    	cascadeId=treeNode.cascadeId;
+			    }
+			    $("#cascadeId").val(cascadeId)
+	   			//执行重载
+	   			webplus.reloadTable('','searchSubmit');
+			    
+			};
+			 webplus.initTree("system/dept/loadDeptTree",setting);
+		 var cols= [ [{
+				checkbox: true
+			}, {
+				field : 'userId',
+				title : '编号',
+				hide : true 
+			}, {
+				field : 'account',
+				title : '用户账号',
+				minWidth : 90
+			}, {
+				field : 'username',
+				title : '姓名',
+				minWidth : 80
+			}, {
+				field : 'deptName',
+				title : '所属机构',
+				minWidth : 120
+			}, {
+
+				title : '操作',
+				toolbar : '#trTool',
+				width : 83,
+				fixed: 'right'
+			} ] ];
+	   var params={};
+	   var roleId=$("#outRoleId").val();
+	   params.outRoleId=roleId;
+	   webplus.init('system/user/list',cols,'','','','',params,);
+	   
+	   var roleCols= [ [ {
+			checkbox: true
+		}, {
+			field : 'userId',
+			title : '编号',
+			hide : true 
+		}, {
+			field : 'account',
+			title : '用户账号',
+			minWidth : 90
+		}, {
+			field : 'username',
+			title : '姓名',
+			minWidth : 80
+		}, {
+
+			title : '操作',
+			toolbar : '#roleUserTool',
+			width : 83,
+			fixed: 'right'
+		} ] ];
+	 var roleParams={}
+	 roleParams.inRoleId=roleId;
+     webplus.init('system/user/list',roleCols,'roleUserForm','roleUserSubmit','roleUserList','roleUserToolbar', roleParams);
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			   
+			    switch(rowObj.event){
+			    	
+			    	case 'auzUser':
+			    		var paramData = {};
+			    		paramData.userIds=rowObj.data.userId;
+			    		paramData.roleId=roleId;
+			    		webplus.doAjax('system/role/saveRoleUser',paramData,'','','0');
+			    		break;
+			    }
+			    return false;
+			  
+			  });
+			 
+			 
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'batchAuzUser':
+			        var paramData = {};
+		    		paramData.roleId=roleId;
+			      	webplus.batchOperate('system/role/saveRoleUser','','userId','userIds',paramData,'你确定批量授权你选择的用户吗？');
+			     	     break;
+			      
+			    }
+			  });
+			   
+			  //监听行工具事件
+			  table.on('tool(roleUserList)', function(rowObj){
+			    switch(rowObj.event){
+			    	
+			    	case 'remove':
+			    		var paramData = {};
+			    		paramData.userIds=rowObj.data.userId;
+			    		paramData.roleId=roleId;
+			    		webplus.doAjax('system/role/removeRoleUser',paramData,'你确定撤销这个用户授权吗？','','0');
+				        
+			    		break;
+			    }
+			    
+			  });
+			 
+			 
+			 //监听表头按钮事件
+			  table.on('toolbar(roleUserList)', function(obj){
+			    switch(obj.event){
+			      
+			      	case 'batchRemove':
+			      		var paramData = {};
+				    	paramData.roleId=roleId;
+					    webplus.batchOperate('system/role/removeRoleUser','roleUserList','userId','userIds',paramData,'你确定批量移除授权的用户吗？');
+				        break;
+			    }
+			   
+			  });
+
+		});
+	</script>
+</body>
+</html>

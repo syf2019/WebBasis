@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="include :: header"></head>
+<body>
+	<form class="layui-form layui-form-pane" action="" id="saveForm">
+
+
+
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">机构名称<span>*</span></label>
+				<div class="layui-input-inline">
+					<input type="text" name="deptName" lay-verify="required|max:50"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label"  >上级机构
+				<span>*</span></label>
+				<div class="layui-input-inline">
+				<input type="hidden" id="parentId" name="parentId" />
+				<input type="text" id="parentName" name="parentName" lay-verify="required"
+						autocomplete="off" class="layui-input" >
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">机构代码</label>
+				<div class="layui-input-inline">
+					<input type="text" name="deptCode" lay-verify="alphaNum"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">主要负责人</label>
+				<div class="layui-input-inline">
+					<input type="text" name="manager" lay-verify="max:50"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">电话</label>
+				<div class="layui-input-inline">
+					<input type="text" name="phone" lay-verify="phoneAndTel"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">传真</label>
+				<div class="layui-input-inline">
+					<input type="text" name="fax" lay-verify="fax" autocomplete="off"
+						class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">自动展开</label>
+				<div class="layui-input-inline">
+					<select name="isAutoExpand" lay-select-dict="is_auto_expand"
+						lay-select-title="NONE" lay-select-code="1">
+
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">排序号<span>*</span></label>
+				<div class="layui-input-inline">
+					<input type="number" name="sortNo" value="1"
+						lay-verify="required|max:10" autocomplete="off"
+						class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">联系地址</label>
+				<div class="layui-input-inline">
+					<input type="text"  name="address" style="width: 515px"
+						lay-verify="max:200"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-textarea-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="remark" lay-verify="max:400" style="width: 515px" 
+					class="layui-textarea"></textarea>
+			</div>
+		</div>
+
+		<!-- 隐藏域 -->
+		<div class="layui-form-item" style="display: none;">
+			<button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+		</div>
+	</form>
+	<div th:include="include :: footer"></div>
+	<script>
+		layui.config({
+			base : cxt + 'layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus', //主入口模块
+		}).use([ 'form', 'webplus' ], function() {
+			var webplus = layui.webplus;
+			webplus.initForm('system/dept/save');
+			
+			//打开机构树
+			$("#parentName").focus(function(){
+				  webplus.openWindow('system/dept/showDeptTree?hiddenId=parentId&showName=parentName','选择上级机构','400','400','1');
+			  });
+
+
+         
+		});
+		  
+	</script>
+
+	<link rel="stylesheet" th:href="@{/css/common/openshow.css}"
+		media="all" />
+
+</body>
+</html>

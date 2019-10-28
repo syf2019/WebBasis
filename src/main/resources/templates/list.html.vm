@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})
+#set($keyPropertyName=${field.propertyName})
+#end
+#end
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: header"></head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+#foreach($field in ${table.fields})
+#if(${field.columnType} == "STRING")
+#if(!${field.keyFlag})
+#if($!cfg.get($!{field.propertyName}))
+                 <div class="layui-inline">
+				  <label class="layui-form-label">${field.comment}</label>
+				  <div class="layui-input-block">
+				  <select name="${field.propertyName}" lay-select-dict="$!cfg.get($!{field.propertyName})" >
+				  </select>
+			      </div>							
+				 </div>
+#else
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">${field.comment}</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="${field.propertyName}" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+#end
+#end
+#end
+#end
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >查询</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+	<link rel="stylesheet"    th:href="@{/css/common/loader.css}" media="all"/>
+<link rel="stylesheet"    th:href="@{/css/common/tablepage.css}" media="all"/>
+<div type="text/html" id="trTool" style="display:none">
+    <a  shiro:hasPermission="${package.ModuleName}:${table.entityPath}:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a  shiro:hasPermission="${package.ModuleName}:${table.entityPath}:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+     <button shiro:hasPermission="${package.ModuleName}:${table.entityPath}:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增</button>
+</div>
+<div th:include="include :: footer"></div>
+	<script>
+		layui.config({
+			base :  cxt+'layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '序号'
+			}, {
+				field : '${keyPropertyName}',
+				title : '编号',
+				hide : true 
+			},
+#foreach($field in ${table.fields})
+#if(${field.columnType} == "STRING")
+#if(!${field.keyFlag})
+#if($!cfg.get($!{field.propertyName}))
+            {
+			 field : '${field.propertyName}_dict',
+			 title : '${field.comment}',
+			 width:150
+			},
+#else
+            {
+			 field : '${field.propertyName}',
+			 title : '${field.comment}',
+			 width:150
+			},
+#end         
+#end
+#end
+#end       {
+
+				title : '操作',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width :150
+			} ] ];
+		   webplus.init('#if(${package.ModuleName})${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end/list',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    switch(rowObj.event){
+			    	case 'edit':
+			    		webplus.openEditWindow('#if(${package.ModuleName})${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end/edit','编辑',rowObj,'${keyPropertyName}','','700','560');
+			       		
+			   			break;
+			    	case 'del':
+				    	
+				        webplus.removeRow('#if(${package.ModuleName})${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end/remove',rowObj,'${keyPropertyName}');
+			    		break;
+			    }
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('#if(${package.ModuleName})${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end/add','新增','700','560');
+			     	     break;
+			    }
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

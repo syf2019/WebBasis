@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ <link rel="stylesheet" th:href="@{/css/index.css}" media="all"/>
+<link rel="stylesheet"    th:href="@{/css/login.css}" media="all"/>
+<head th:include="include :: header"></head>
+<style>
+.layadmin-user-login-body>.layui-form-item input{height:38px;}
+.layadmin-user-login-body>.layui-form-item button{font-weight:500;font-size: 18px;}
+</style>
+<body  class="login-wrapper">
+     <title>webplus开发平台登陆</title>
+  <div class="layadmin-user-login layadmin-user-display-show " id="LAY-user-login" style="display: none;">
+    <div class="login-body" style="width:100%;height:100%">
+	    <div class="layadmin-user-login-main">
+	      <div class="layadmin-user-login-box layadmin-user-login-header">
+	        <img src="img/login/login_logo.png" th:src="@{/img/login/login_logo.png}" id="logos">
+	      </div>
+	      <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+	        <div class="layui-form-item">
+	          <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+	          <input type="text" name="username" id="LAY-user-login-username" lay-verify="required" autocomplete="off" placeholder="用户名" class="layui-input" >
+	        </div>
+	        <div class="layui-form-item">
+	          <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+	          <input type="password" name="password" id="LAY-user-login-password" autocomplete="off" lay-verify="required" placeholder="密码" class="layui-input" >
+	        </div>
+	        <div class="layui-form-item">
+	          <button class="layui-btn layui-btn-fluid" lay-submit id="loginSubmit" lay-filter="LAY-user-login-submit">登 入</button>
+	        </div>
+	      </div>
+	    </div>
+     </div>
+  </div>
+	<div class="login-footer">
+        <p>© 2019 <a href="javascript:;" target="_blank">XXX版权所有</a></p>
+         
+    </div>
+
+	<div th:include="include :: footer"></div>
+	<script th:src="@{/lib/md5.js}"></script>
+	<script th:src="@{/lib/login.js}"></script>
+  <script>
+	layui.config({
+		base : cxt + 'layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form', 'webplus' ], function() {
+		var $ = layui.$,
+		form=layui.form;
+	    webplus = layui.webplus;
+
+			function login(account,password){
+				var params={};
+				params.account=account;
+				params.password=hex_md5(password);
+				webplus.doAjax('login',params,'','','',function(data){
+					sessionStorage.removeItem('lockStatus');
+					webplus.setName('token',data.token)
+					webplus.setName('loginAccount',data.user.account);
+					setTimeout(function(){
+						$("#token").val(data.token);
+			        	//document.getElementById("loginIndexForm").submit();
+						window.location.href = cxt + "system/main/initMain";
+			        	
+			        	
+	        		},500)
+				});
+				
+			}
+		    //提交
+    form.on('submit(LAY-user-login-submit)', function(obj){
+      //请求登入接口
+      var account = $.trim($("#LAY-user-login-username").val());
+      var password = $.trim($("#LAY-user-login-password").val());
+      login(account,password);
+		});
+    $(document).keydown(function(event) {
+    	if (event.keyCode == 13) {
+    	
+           $("#loginSubmit").click();
+    	}
+    });
+  });
+  </script>
+  <form id="loginIndexForm" class="loginForm" th:action="@{system/main/initMain}"
+		method="post">
+		<input id="token" name="token" type="hidden" />
+	</form>
+</body>
+</html>

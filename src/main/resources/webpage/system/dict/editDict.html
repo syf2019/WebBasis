@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="include :: header"></head>
+<body>
+<form class="layui-form layui-form-pane label-w6" action="" th:object="${dict}" id="saveForm">
+ <input type="hidden" name="dictKey" th:value="${dictIndex.dictKey}"  />
+<input type="hidden" name="oldDictCode" th:value="*{dictCode}"  />
+<input type="hidden" name="dictIndexId" th:value="*{dictIndexId}"  />
+<input type="hidden" name="dictId" th:value="*{dictId}"  />
+  <div class="layui-form-item">
+    <label class="layui-form-label">字典标识 </label>
+    <div class="layui-input-block">
+      <input type="text" name="dictKey" th:value="${dictIndex.dictKey}" disabled autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">字典名称 </label>
+    <div class=layui-input-block>
+      <input type="text" name="dictName" th:value="${dictIndex.dictName}" disabled  autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">字典对照码  <span>*</span></label>
+    <div class=layui-input-block>
+      <input type="text" name="dictCode" th:value="*{dictCode}"  lay-verify="required|max:100"  autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">字典对照值  <span>*</span></label>
+    <div class=layui-input-block>
+      <input type="text" name="dictValue" th:value="*{dictValue}" lay-verify="required|max:100"  autocomplete="off" class="layui-input">
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">当前状态</label>
+    <div class="layui-input-block">
+      <select name="status"  th:attr="lay-select-code=*{status}" lay-select-dict="status" lay-select-title="NONE" >
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">编辑模式</label>
+    <div class="layui-input-block">
+      <select name="editMode"   th:attr="lay-select-code=*{editMode}" lay-select-dict="edit_mode" lay-select-title="NONE" >
+     
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">排序号  <span>*</span></label>
+    <div class=layui-input-block>
+      <input type="number" name="sortNo" th:value="*{sortNo}"  lay-verify="required"  autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+  <div th:include="include :: footer"></div>
+	<script>
+	layui.config({
+		base :  cxt+'layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form','webplus' ], function() {
+	    var webplus=layui.webplus;
+		webplus.initForm('system/dict/updateDict','','',function(data){
+		 webplus.reloadTable('1','submitDict'); //刷新父页面的table
+    		
+		});
+		
+	});
+
+	</script>
+<link rel="stylesheet"    th:href="@{/css/common/openshow.css}" media="all"/>
+</body>
+</html>

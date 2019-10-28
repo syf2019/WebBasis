@@ -1,0 +1,24 @@
+<head th:fragment="header">
+<title></title>
+<meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}"  media="all"/>
+<link rel="stylesheet"    th:href="@{/layuiadmin/style/admin.css}"
+	media="all"/>
+<link rel="stylesheet"    th:href="@{/css/common/loader.css}" media="all"/>
+<link rel="stylesheet"    th:href="@{/css/common/tablepage.css}" media="all"/>
+	
+</head>
+<div th:fragment="footer">
+	<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+	<script type="text/javascript" th:src="@{/lib/jQuery-2.2.0.min.js}"> </script>
+	<script th:inline="javascript">     
+	 
+	  /*<![CDATA[*/
+      var cxt = [[@{/}]];  
+      /*]]>*/
+    </script>
+</div>
+

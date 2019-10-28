@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})
+#set($keyPropertyName=${field.propertyName})
+#end
+#end
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include :: header"></head>
+<body>
+<form class="layui-form layui-form-pane"     id="saveForm">
+<input type="hidden" name="${keyPropertyName}" th:value="${${table.entityPath}.${keyPropertyName}}"  />
+#foreach($field in ${table.fields})
+#if(${field.columnType} == "STRING")
+#if(!${field.keyFlag})
+#if($!cfg.get($!{field.propertyName}))
+  <div class="layui-form-item">
+    <label class="layui-form-label">${field.comment}</label>
+    <div class="layui-input-block">
+       <select name="${field.propertyName}" lay-select-dict="$!cfg.get($!{field.propertyName})" th:attr="lay-select-code=${${table.entityPath}.${field.propertyName}}">
+	  </select>
+    </div>
+  </div>
+#else
+  <div class="layui-form-item">
+    <label class="layui-form-label">${field.comment}</label>
+    <div class="layui-input-block">
+      <input type="text" name="${field.propertyName}" th:value="${${table.entityPath}.${field.propertyName}}" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+#end
+#end
+#end
+#end
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+  <div th:include="include :: footer"></div>
+	<script>
+	layui.config({
+		base :  cxt+'layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form','webplus' ], function() {
+		var webplus=layui.webplus;
+		webplus.initForm('system/param/update');
+		${cfg.status}
+	});
+	</script>
+<link rel="stylesheet"    th:href="@{/css/common/openshow.css}" media="all"/>
+</body>
+</html>

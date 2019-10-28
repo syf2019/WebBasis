@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include :: header"></head>
+<body>
+	<div class="layui-fluid">
+<div class="layui-row tree-item" >
+<div class="childLeft-item">
+			<div class="layui-card" style="overflow:auto">
+	          <div class="layui-card-header">组织机构树</div>
+	          <div class="layui-card-body">
+	          	<ul id="ztree" class="ztree"></ul>
+	          </div>
+	        </div>
+		</div>
+		
+		<div class="childRight-item">
+			<div class="layui-card">
+				<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">用户账号</label>
+							<div class="layui-input-block">
+							<input type="hidden" name="cascadeId" id="cascadeId"/>
+							<input type="text" name="account"  placeholder="请输入"
+									autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">姓名</label>
+							<div class="layui-input-block">
+							<input type="text" name="username"  placeholder="请输入"
+									autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">手机</label>
+							<div class="layui-input-block">
+							<input type="text" name="mobile"  placeholder="请输入"
+									autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+						<label class="layui-form-label">用户状态</label>
+						<div class="layui-input-block">
+							<select name="status" lay-select-dict="user_status" >
+								
+							</select>
+						</div>
+					    </div>
+					    <div class="layui-inline">
+						<label class="layui-form-label">注册日期</label>
+						<div class="layui-input-block">
+							<input style="width:180px;" name="enrollDate" type="text" class="layui-input" id="enrollDate">
+						</div>
+					   </div>
+						<div class="layui-inline">
+							<button class="layui-btn layuiadmin-btn-sm" lay-submit
+								lay-filter="searchSubmit" >查询</button>
+							
+						</div>
+	
+					</div>
+				</div>
+				<div class="layui-card-body">
+					<table id="dataList" lay-filter="dataList" ></table>
+					
+		
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<link rel="stylesheet"    th:href="@{/lib/ztree/css/zTreeStyle/zTreeStyle.css}" type="text/css" media="all">
+<link rel="stylesheet"    th:href="@{/css/common/loader.css}" media="all"/>
+<link rel="stylesheet"    th:href="@{/css/common/tablepage.css}" media="all"/>
+<div type="text/html" id="trTool" style="display:none">
+    <a shiro:hasPermission="system:user:edit"  class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a shiro:hasPermission="system:user:resetPassword" class="layui-btn layui-btn-blue layui-btn-xs" lay-event="resetPwd"><i class="layui-icon layui-icon-password"></i>重置密码</button>
+    <a shiro:hasPermission="system:user:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+<div type="text/html" id="toolbar" style="display:none" >
+  <div class="layui-btn-container">
+    <button  shiro:hasPermission="system:user:add" class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增</button>
+    <button  shiro:hasPermission="system:user:move" class="layui-btn layui-btn-success layui-btn-sm" lay-event="move"> <i class="layui-icon layui-icon-right"></i>移动用户</button>
+    <button shiro:hasPermission="system:user:remove"   class="layui-btn layui-btn-danger layui-btn-sm" lay-event="batchRemove"> <i class="layui-icon layui-icon-delete"></i>批量删除</button>
+  </div>
+</div>
+<script type="text/html" id="switchTpl">
+  <input type="checkbox" name="status" value="{{d.userId}}" lay-skin="switch" lay-text="正常|锁定" lay-filter="userStatus" {{ d.status == '1' ? 'checked' : '' }}>
+</script>
+	<div th:include="include :: footer"></div>
+	<script type="text/javascript" th:src="@{/lib/ztree/js/jquery.ztree.core.js}"></script>
+	<script type="text/javascript" th:src="@{/lib/ztree/js/jquery.ztree.excheck.js}"></script>
+	<script type="text/javascript" th:src="@{/lib/ztree/js/jquery.ztree.exedit.js}"></script>
+	<script>
+		
+		layui.config({
+			base :  cxt+'layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus' //主入口模块
+		}).use([ 'table', 'form','webplus','laydate' ], function() {
+			var $ = layui.$, 
+			form = layui.form, 
+			laydate = layui.laydate,
+			table = layui.table,
+			webplus=layui.webplus;
+			var setting = {
+				check: {
+					enable: false
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onClick: zTreeOnClick//节点点击事件
+				}
+			};
+			function zTreeOnClick(event, treeId, treeNode) {
+			    var cascadeId="";
+			    if(treeNode.id!='0'){
+			    	//获取查询对象数据
+			    	cascadeId=treeNode.cascadeId;
+			    }
+			    $("#cascadeId").val(cascadeId)
+	   			//执行重载
+	   			webplus.reloadTable();
+			    
+			};
+			 webplus.initTree("system/dept/loadDeptTree",setting);
+			 laydate.render({
+			        elem: '#enrollDate'
+			        ,range: true
+			        ,max:0
+			    });
+			 var cols= [ [ {
+					type : 'numbers',
+					title : '序号'
+				},{
+					checkbox: true
+				}, {
+					field : 'userId',
+					title : '编号',
+					hide : true 
+				}, {
+					field : 'account',
+					title : '用户账号',
+					width : 140
+				}, {
+					field : 'username',
+					title : '姓名',
+					width : 120
+				}, {
+					field : 'deptName',
+					title : '所属机构',
+					minWidth : 120
+				}, {
+					field : 'sex_dict',
+					title : '性别',
+					width : 80,
+				}, {
+					field : 'mobile',
+					title : '手机',
+				    width : 120,
+				}, {
+					field : 'email',
+					title : '邮箱',
+					minWidth : 140,
+					
+				}, {
+					field : 'status',
+					title : '用户状态',
+					templet: '#switchTpl', 
+					unresize: true,
+					width : 100
+					
+				},{
+					field : 'createTime',
+					title : '注册时间',
+					width : 170
+					
+				}, {
+
+					title : '操作',
+					toolbar : '#trTool',
+					width : 235,
+					fixed: 'right'
+				} ] ];
+		   webplus.init('system/user/list',cols);
+		    
+		    form.on('switch(userStatus)', function(obj){
+		           var status="2";
+		    	   if(obj.elem.checked){
+		    		   status="1";
+		    	   }
+		    	   var userId=obj.value;
+		    	   var params={};
+		    	   params.userId=userId;
+		    	   params.status=status;
+		    	   webplus.doAjax("system/user/update",params,"","","3");
+			 });
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    //判断操作的按钮类别  需要在标签上配置  lay-event='判断的类型值'
+			    switch(rowObj.event){
+			    	
+			    	case 'edit':
+			    		
+			    		//打开编辑弹出框
+			       		webplus.openEditWindow('system/user/edit','编辑用户',rowObj,'userId','','700','510');
+			   			break;
+                    case 'resetPwd':
+                      
+			    		//打开编辑弹出框
+			       		webplus.openEditWindow('system/user/resetPassword','重置密码',rowObj,'userId','','450','230');
+			   			break;
+			    	case 'del':
+                        
+			    		 webplus.removeRow('system/user/remove',rowObj,'userId');
+			    		break;
+			    }
+			  });
+			 
+			 
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    var checkStatus = table.checkStatus(obj.config.id);
+			    switch(obj.event){
+			      	case 'add':
+			      	  //打开添加弹出框
+				         webplus.openWindow('system/user/add','新增用户','700','510');
+			     	     break;
+			    	case 'move':
+				      //打开添加弹出框
+					  webplus.openMoreWindow('system/user/moveUser','','userId','','移动用户','400','510','1');
+				      break;
+			    	case 'batchRemove':
+				        webplus.batchRemoveRow('system/user/batchRemove','','userId');
+				       break;
+			    }
+			  });
+			
+			
+		});
+		
+	</script>
+
+</body>
+</html>

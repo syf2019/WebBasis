@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="include :: header"></head>
+<style>
+html{background:#fff;}
+body{padding:0 0 5px 0!important;}
+body>form>ul{background:#fff;}
+</style>
+<link rel="stylesheet"    th:href="@{/lib/ztree/css/zTreeStyle/zTreeStyle.css}" type="text/css" media="all">
+<body>
+<form class="layui-form layui-form-pane" action="" id="saveForm">
+    <ul id="ztree" class="ztree"></ul>
+  <input type="hidden" id="roleId"  th:value="${roleId}"/>
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn" id="submitForm" lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+
+  <div th:include="include :: footer"></div>
+   <script type="text/javascript" th:src="@{/lib/ztree/js/jquery.ztree.core.js}"></script>
+   <script type="text/javascript" th:src="@{/lib/ztree/js/jquery.ztree.excheck.js}"></script>
+   <script type="text/javascript" th:src="@{/lib/ztree/js/jquery.ztree.exedit.js}"></script>
+	<script>
+
+	layui.config({
+		base :  cxt+'layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus' //主入口模块
+	}).use([ 'table', 'form','webplus' ], function() {
+		var $ = layui.$, 
+		form = layui.form, 
+		webplus=layui.webplus;
+		//数据的配置
+		var setting = {
+			check: {
+				enable: true,
+				chkStyle: "checkbox",
+				chkboxType: { "Y": "ps", "N": "s" }
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			}
+		};
+		 var roleId=$("#roleId").val();
+		webplus.initTree("system/role/listRoleMenu?roleId="+roleId,setting)
+	   
+	    form.on('submit(saveSubmit)', function(data){
+	    	
+	 	     var menuIds=getTreeCheckNodeId();
+			 if(webplus.isEmpty(menuIds)){
+				 webplus.alertError("请选择你要授权的菜单");
+				 return false;
+			 }
+			  var params={};
+			  params.roleId=roleId;
+			  params.menuIds=menuIds;
+			  webplus.doAjax('system/role/saveRoleMenu',params,'','','2');
+			//阻止表单默认提交
+		    return false;
+		  }); 
+			
+			function getTreeCheckNodeId(){
+				var ids= "";
+				var treeObj = $.fn.zTree.getZTreeObj("ztree");
+		        var nodes = treeObj.getCheckedNodes(true);
+		        var len = nodes.length;
+		             for (var i=0; i<len; i++) {
+		               if(nodes[i].id!=0){
+		                   if(i==len-1){
+		                	   ids += nodes[i].id
+		                   }else{
+		                	   ids += nodes[i].id+",";
+		                   }
+		                	
+		              }
+		          }
+		       return ids;      
+			}
+			
+		});
+	</script>
+
+<link rel="stylesheet"    th:href="@{/css/common/openshow.css}" media="all"/>
+
+</body>
+</html>

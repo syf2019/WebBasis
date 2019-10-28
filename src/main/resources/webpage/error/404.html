@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include :: header"></head>
+<style>
+body{background:#e3e2e7}
+.wrap{height:100%}
+.errors{width:100%;height:100%;}
+.errors .text h4{color:#e54919;font:36px "微软雅黑","宋体";font-weight:700;padding-bottom:8px}
+.errors .text p{line-height:22px}
+.errors .text p span{color:#e54919;font-weight:700;cursor:pointer;padding:0 5px}
+.errors .text p #downTime{cursor:default}
+</style>
+<body>
+<div class="wrap">
+    <div class="errors" th:style="'background:url('+@{/img/login/404.jpg}+') no-repeat center;'">
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+</body>
+</html>

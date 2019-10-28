@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="include :: header"></head>
+<body>
+	<form class="layui-form layui-form-pane" action="" id="saveForm">
+	<input type="hidden" name="userId" th:value="${user.userId}"/>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">用户账号<span>*</span></label>
+				<div class="layui-input-inline">
+					<input type="text" name="account" disabled th:value="${user.account}" lay-verify="required|alphaDash|max:50"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">用户名<span>*</span></label>
+				<div class="layui-input-inline">
+					<input type="text" name="username" th:value="${user.username}" lay-verify="required|max:50"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			
+		</div>
+	
+		<div class="layui-form-item">
+		  <div class="layui-inline">
+				<label class="layui-form-label"  >所属机构
+				<span>*</span></label>
+				<div class="layui-input-inline">
+				<input type="hidden" id="deptId" name="deptId"  th:value="${user.deptId}"/>
+				<input type="text" id="parentName" name="parentName" th:value="${user.deptName}" lay-verify="required"
+						autocomplete="off" class="layui-input" >
+				</div>
+			</div>
+		<div class="layui-inline">
+				<label class="layui-form-label">性别<span>*</span></label>
+				<div class="layui-input-inline">
+					<select name="sex"  lay-select-dict="sex" lay-select-title="NONE"  th:attr="lay-select-code=${user.sex}">
+
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">手机<span>*</span></label>
+				<div class="layui-input-inline">
+					<input type="text" name="mobile" th:value="${user.mobile}" lay-verify="required|phone"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-inline">
+					<input type="text" name="email" th:value="${user.email}" lay-verify="email"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">QQ</label>
+				<div class="layui-input-inline">
+					<input type="text" name="qq" th:value="${user.qq}" lay-verify="qq"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">微信</label>
+				<div class="layui-input-inline">
+					<input type="text" name="wechat" th:value="${user.wechat}" lay-verify="wechat"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+		<div class="layui-inline">
+				<label class="layui-form-label">证件号码</label>
+				<div class="layui-input-inline">
+					<input type="text" name="idno" th:value="${user.idno}" lay-verify="idCard"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">联系地址</label>
+				<div class="layui-input-inline">
+					<input type="text"  name="address" th:value="${user.address}" lay-verify="max:200"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+		</div>
+		<div class="layui-form-item">
+		<div class="layui-inline">
+				<label class="layui-form-label">用户状态<span>*</span></label>
+				<div class="layui-input-inline">
+					<select name="status"  lay-select-dict="status" lay-select-title="NONE"  th:attr="lay-select-code=${user.status}">
+
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">锁定次数<span>*</span></label>
+				<div class="layui-input-inline">
+					<input type="text"  name="lockNum" lay-verify="required|integer|minInt:3|maxInt:10" th:value="${user.lockNum}"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-textarea-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="remark" lay-verify="max:400" th:text="${user.remark}" style="width: 515px" 
+					class="layui-textarea"></textarea>
+			</div>
+		</div>
+
+		<!-- 隐藏域 -->
+		<div class="layui-form-item" style="display: none;">
+			<button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+		</div>
+	</form>
+	<div th:include="include :: footer"></div>
+	<script>
+		layui.config({
+			base : cxt + 'layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus', //主入口模块
+		}).use([ 'form', 'webplus' ], function() {
+			var webplus = layui.webplus;
+			webplus.initForm('system/user/update');
+			
+			//打开机构树
+			$("#parentName").focus(function(){
+				  webplus.openWindow('system/dept/showDeptTree?hiddenId=deptId&showName=parentName','选择组织机构','400','400','1');
+			  });
+
+
+         
+		});
+		  
+	</script>
+
+	<link rel="stylesheet" th:href="@{/css/common/openshow.css}"
+		media="all" />
+
+</body>
+</html>
